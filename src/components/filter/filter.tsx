@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { changeFilter } from "@/todoSlice";
 import { useDispatch } from "react-redux";
 
@@ -33,24 +33,28 @@ const choices = ["All", "Todo", "Done"];
 
 export function Filter() {
   const todos = useSelector((state: TodoRoot) => state.todo.todos);
-  let todo = 0,
-    done = 0;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
 
-  todos.forEach((item) => {
-    if (item.done === false) {
-      todo += 1;
-    } else {
-      done += 1;
-    }
-  });
+  const counter = useMemo(() => {
+    return {
+      all: todos.length,
+      todo: todos.filter((item) => !item.done).length,
+      done: todos.filter((item) => item.done).length,
+    };
+  }, [todos]);
+
+  const handleSelectFilter = (currentValue: string) => {
+    setValue(currentValue);
+    setOpen(false);
+    dispatch(changeFilter(currentValue));
+  };
 
   return (
     <div className="mb-3 flex items-center ">
       <div className="mr-3">
-        All: {todos.length} | To do: {todo} | Done: {done}
+        All: {counter.all} | To do: {counter.todo} | Done: {counter.done}
       </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -69,15 +73,7 @@ export function Filter() {
               <CommandEmpty>Something went wrong...</CommandEmpty>
               <CommandGroup>
                 {choices.map((c, i) => (
-                  <CommandItem
-                    key={i}
-                    value={c}
-                    onSelect={(currentValue) => {
-                      setValue(currentValue);
-                      setOpen(false);
-                      dispatch(changeFilter(currentValue));
-                    }}
-                  >
+                  <CommandItem key={i} value={c} onSelect={handleSelectFilter}>
                     {c}
                   </CommandItem>
                 ))}

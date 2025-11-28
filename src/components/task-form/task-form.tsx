@@ -8,8 +8,8 @@ import { formSchema, type FormValues } from "@/components/task-form/formSchema";
 
 type Task = {
   text: string;
-  deadline: Date;
-  descr: string | undefined;
+  deadline?: Date;
+  descr?: string;
 };
 
 interface TaskFormPropsInterface {
@@ -31,7 +31,7 @@ export function TaskForm({ handleAddTask }: TaskFormPropsInterface) {
   const onSubmit = (props: FormValues) => {
     handleAddTask({
       text: props.text,
-      deadline: new Date(props.deadline),
+      deadline: props.deadline ? new Date(props.deadline) : undefined,
       descr: props.descr,
     });
     reset();
@@ -55,25 +55,33 @@ export function TaskForm({ handleAddTask }: TaskFormPropsInterface) {
       />
       <span className="text-red-500 text-xs mb-3">{errors.text?.message}</span>
 
-      <Label htmlFor="text" className="mb-2">
+      <Label htmlFor="descr" className="mb-2">
         Description:
       </Label>
       <Input
         type="text"
-        id="text"
+        id="descr"
         placeholder="Description"
         className="mb-1"
-        {...register("text")}
+        {...register("descr")}
       />
       <span className="text-red-500 text-xs mb-3">{errors.descr?.message}</span>
 
+      <Label htmlFor="deadline" className="mb-2">
+        Deadline:
+      </Label>
       <Input
         type="datetime-local"
         step="1"
+        id="deadline"
         {...register("deadline")}
         className="mb-3"
       />
-      {errors.deadline && <span>{errors.deadline.message}</span>}
+      {errors.deadline && (
+        <span className="text-red-500 text-xs mb-3">
+          {errors.deadline.message}
+        </span>
+      )}
 
       <Button
         type="submit"

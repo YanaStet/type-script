@@ -5,7 +5,7 @@ interface Todo {
   text: string;
   descr?: string;
   done: boolean;
-  deadline: Date;
+  deadline?: Date;
 }
 
 interface TodoState {
@@ -18,20 +18,9 @@ const initialState: TodoState = {
     {
       id: 1,
       text: "Do dishes",
+      descr: undefined,
       done: false,
-      deadline: new Date(2025, 8, 7, 22, 22, 22),
-    },
-    {
-      id: 2,
-      text: "Do bed",
-      done: false,
-      deadline: new Date(2025, 9, 7, 22, 22, 22),
-    },
-    {
-      id: 3,
-      text: "Do cooking",
-      done: false,
-      deadline: new Date(2026, 8, 7, 22, 22, 22),
+      deadline: new Date(2025, 8, 9, 15, 30, 0),
     },
   ],
   filter: "All",
@@ -54,6 +43,11 @@ const todoSlice = createSlice({
     },
     changeFilter: (state, action) => {
       state.filter = action.payload;
+    },
+    editTodo: (state, action) => {
+      state.todos = state.todos.map((item) =>
+        action.payload.id === item.id ? action.payload.data : item
+      );
     },
   },
 });

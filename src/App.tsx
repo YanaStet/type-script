@@ -25,8 +25,8 @@ interface TodoRoot {
 
 type Task = {
   text: string;
-  deadline: Date;
-  descr: string | undefined;
+  deadline?: Date;
+  descr?: string;
 };
 
 function App() {
@@ -60,19 +60,21 @@ function App() {
     filter === "All"
       ? todos
       : filter === "Done"
-      ? todos.filter((todo) => todo.done === true)
-      : todos.filter((todo) => todo.done === false);
+      ? todos.filter((todo) => todo.done)
+      : todos.filter((todo) => !todo.done);
 
   return (
     <div className="flex">
       <TaskForm handleAddTask={handleAddTodo} />
       <div className="flex items-center pt-5 flex-col w-260">
         <Filter />
-        {filteredTodo.map(({ id, text, done, deadline }) => {
+        {filteredTodo.length < 1 ? "There are no tasks" : null}
+        {filteredTodo.map(({ id, text, descr, done, deadline }) => {
           return (
             <TodoItem
               id={id}
               text={text}
+              descr={descr}
               done={done}
               deadline={deadline}
               handleChange={handleChangeDone}
